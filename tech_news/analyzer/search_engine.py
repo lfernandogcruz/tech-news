@@ -23,7 +23,7 @@ def search_by_tag(tag):
     found = search_news({"tags": {"$regex": tag, "$options": "i"}})
     list = []
     for item in found:
-        list.append((item["tag"], item["url"]))
+        list.append((item["title"], item["url"]))
     return list
 
 
@@ -32,5 +32,5 @@ def search_by_category(category):
     found = search_news({"category": {"$regex": category, "$options": "i"}})
     list = []
     for item in found:
-        list.append((item["category"], item["url"]))
+        list.append((item["title"], item["url"]))
     return list
