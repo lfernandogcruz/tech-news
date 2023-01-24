@@ -41,12 +41,64 @@ def scrape_next_page_link(html_content):
 
 # Requisito 4
 def scrape_news(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    # url - link para acesso da notícia.
+    # <head><link rel="canonical" href=LINK></head>
+    url = selector.css("link[rel=canonical]::attr(href)").get()
+    # title - título da notícia.
+    # <h1 class="entry-title">TITLE</h1>
+    title = selector.css(".entry-title::text").get().rstrip()
+    # timestamp - data da notícia, no formato dd/mm/AAAA.
+    # <li class="meta-date">DATE</li>
+    timestamp = selector.css(".meta-date::text").get()
+    # writer - nome da pessoa autora da notícia.
+    # <span class="author"><a ...>AUTHOR</a></span>
+    writer = selector.css(".author a::text").get()
+    # comments_count - número de comentários que a notícia recebeu.
+    # <ol class="comment-list"><li>COMMENT</li></ol>
+    comments = selector.css(".comment-list li").getall()
+    # Se a informação não for encontrada, salve este atributo como 0 (zero)
+    comments_count = len(comments)
+    # summary - o primeiro parágrafo da notícia.
+    # <div class="entry-content"><p>SUMMARY</p>...</div>
+    # summary = selector.css(".entry-content p::text").getall()[0].rstrip()
+    summary = selector.xpath("string(//p)").get().rstrip()
+    # summary = selector.xpath("string(//p)").get()
+    # tags - lista contendo tags da notícia.
+    # <section class="post-tags">
+    # <ul>
+    # <li><h5 class="title-tags">Tags:</h5></li>
+    # <li><a ... rel="tag">TAG</a></li>
+    # <li><a ... rel="tag">TAG</a></li>
+    # </ul>
+    # </section>
+    tags = selector.css(".post-tags a[rel=tag]::text").getall()
+    # category - categoria da notícia.
+    # <div class="meta-category"><a ...><span ...>XX</span>
+    # <span class="label">CATEGORY</span></a></div>
+    category = selector.css(".meta-category span.label::text").get()
+
+    return {
+        "url": url,
+        "title": title,
+        "timestamp": timestamp,
+        "writer": writer,
+        "comments_count": comments_count,
+        "summary": summary,
+        "tags": tags,
+        "category": category,
+    }
+
+
+# to remove trailing whitespaces at the end of TITLE and SUMMARY
+# used rstrip() method, detailed at:
+# https://www.w3schools.com/python/ref_string_rstrip.asp
+
+# to get the first paragraph of SUMMARY
+# used the xpath method to select the p nodes, detailed at:
+# https://parsel.readthedocs.io/en/latest/usage.html
 
 
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
-
-
-# iniciando o projeto
